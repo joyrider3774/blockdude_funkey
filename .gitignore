@@ -68,3 +68,5 @@ dkms.conf
 /blockdude
 /Blockdude.opk
 /.blockdude_settings.dat
+/stderr.txt
+/temp.lev
