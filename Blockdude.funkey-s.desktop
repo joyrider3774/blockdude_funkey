@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Blockdude
+Comment=A remake of the TI-83 puzzle game
+Terminal=false
+Type=Application
+Exec=blockdude
+Icon=blockdudefs/icon
+Categories=games
