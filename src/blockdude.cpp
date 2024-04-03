@@ -928,8 +928,8 @@ char *GetString(const char *NameIn,const char *Msg)
 		{
 			sprintf(Tekst," ");
 			for (Teller=1;Teller<Selection;Teller++)
-				sprintf(Tekst,"%s ",Tekst);
-			sprintf(Tekst,"%s_",Tekst);
+				strcat(Tekst," ");
+			strcat(Tekst,"_");
 		}
 		else
 			sprintf(Tekst,"_");
@@ -1537,8 +1537,8 @@ void TitleScreen()
 		{
 			sprintf(Tekst,"\n");
 			for(Teller=2;Teller<Selection;Teller++)
-				sprintf(Tekst,"%s%s",Tekst,"\n");
-			sprintf(Tekst,"%s%s",Tekst,">>");
+				strcat(Tekst,"\n");
+			strcat(Tekst,">>");
 		}
 		else
 			sprintf(Tekst,">>");
@@ -1760,8 +1760,8 @@ void LevelEditorMenu()
 		{
 			sprintf(Tekst,"\n");
 			for(Teller=2;Teller<Selection;Teller++)
-				sprintf(Tekst,"%s%s",Tekst,"\n");
-			sprintf(Tekst,"%s%s",Tekst,">>");
+				strcat(Tekst,"\n");
+			strcat(Tekst,">>");
 		}
 		else
 			sprintf(Tekst,">>");
