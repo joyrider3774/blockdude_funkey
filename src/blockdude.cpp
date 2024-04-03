@@ -623,35 +623,42 @@ void PreviousSkin()
     }
 }
 
-void SearchForLevelPacks()
+void DoSearchForLevelPacks(char* Path)
 {
 	struct dirent *Entry;
 	DIR *Directory;
 	struct stat Stats;
-	int Teller=0;
 	char FileName[FILENAME_MAX];
-	Directory = opendir("./blockdudefs/levelpacks");
+	Directory = opendir(Path);
 	if (Directory)
 	{
 		Entry=readdir(Directory);
 		while(Entry)
 		{
-			sprintf(FileName,"./blockdudefs/levelpacks/%s",Entry->d_name);
+			sprintf(FileName,"%s/%s",Path,Entry->d_name);
 			stat(FileName,&Stats);
 			if(S_ISDIR(Stats.st_mode))
 			{
-				if(strncmp(".", Entry->d_name, 1)  && (Teller< MaxLevelPacks) && (strlen(Entry->d_name) < 21))
+				if(strncmp(".", Entry->d_name, 1)  && (InstalledLevelPacksCount< MaxLevelPacks) && (strlen(Entry->d_name) < 21))
 				{
-					sprintf(InstalledLevelPacks[Teller],"%s",Entry->d_name);
-					RemoveUnderScores(InstalledLevelPacks[Teller]);
-					Teller++;
+					sprintf(InstalledLevelPacks[InstalledLevelPacksCount],"%s",Entry->d_name);
+					RemoveUnderScores(InstalledLevelPacks[InstalledLevelPacksCount]);
+					InstalledLevelPacksCount++;
 				}
 			}
 			Entry=readdir(Directory);
 		}
 		closedir(Directory);
 	}
-	InstalledLevelPacksCount = Teller;
+}
+
+void SearchForLevelPacks()
+{
+	InstalledLevelPacksCount = 0;
+	DoSearchForLevelPacks("./blockdudefs/levelpacks");
+	char Path[FILENAME_MAX];
+	sprintf(Path,"%s/.blockdude_levelpacks", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName);
+	DoSearchForLevelPacks(Path);
 	SelectedLevelPack=0;
 	if (InstalledLevelPacksCount > 0)
 	{
@@ -1082,6 +1089,8 @@ void StageSelect()
 	if (SelectedLevel > 0)
 	{
 		sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
+		if(!FileExists(FileName))
+			sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
 		WorldParts.Load(FileName);
 		Player = FindPlayer();
 		SetLayer2Position(Player);
@@ -1146,26 +1155,29 @@ void StageSelect()
                 sprintf(Tekst,"Are you sure you want to delete this level:\n%s - Level %d\n\nPress (%s) to Delete (%s) to Cancel",LevelPackName,SelectedLevel,"A","B");
                 if (AskQuestion(Tekst))
                 {
-                    sprintf(Tekst,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-                    remove(Tekst);
-                    for(Teller=SelectedLevel;Teller<InstalledLevels;Teller++)
-                    {
-                        sprintf(Tekst,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,Teller+1);
-                        sprintf(Tekst1,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,Teller);
-                        rename(Tekst,Tekst1);
-                    }
-                    InstalledLevels--;
-                    if (SelectedLevel > InstalledLevels)
-                        SelectedLevel = InstalledLevels;
-                    if (SelectedLevel==0)
-                        WorldParts.RemoveAll();
-                    else
-                    {
-                        sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-                        WorldParts.Load(FileName);
-                        Player = FindPlayer();
-                        SetLayer2Position(Player);
-                    }
+					sprintf(Tekst,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
+                    if(FileExists(Tekst))
+					{
+						remove(Tekst);
+						for(Teller=SelectedLevel;Teller<InstalledLevels;Teller++)
+						{
+							sprintf(Tekst,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, Teller+1);
+							sprintf(Tekst1,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName,Teller);                      
+							rename(Tekst,Tekst1);
+						}
+						InstalledLevels--;
+						if (SelectedLevel > InstalledLevels)
+							SelectedLevel = InstalledLevels;
+						if (SelectedLevel==0)
+							WorldParts.RemoveAll();
+						else
+						{
+							sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
+							WorldParts.Load(FileName);
+							Player = FindPlayer();
+							SetLayer2Position(Player);
+						}
+					}
                 }
                 Input->Reset();
             }
@@ -1191,7 +1203,9 @@ void StageSelect()
                     {
                         SelectedLevel = UnlockedLevels;
                         sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-                        WorldParts.Load(FileName);
+                        if(!FileExists(FileName))
+							sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
+						WorldParts.Load(FileName);
                         GameState = GSGame;
                     }
                     Input->Reset();
@@ -1212,7 +1226,9 @@ void StageSelect()
                 else
                 {
                     sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-                    WorldParts.Load(FileName);
+                    if(!FileExists(FileName))
+						sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);						
+					WorldParts.Load(FileName);
                     Player = FindPlayer();
                     SetLayer2Position(Player);
                 }
@@ -1222,7 +1238,9 @@ void StageSelect()
                 if (SelectedLevel < 1)
                     SelectedLevel = 1;
                 sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-                WorldParts.Load(FileName);
+                if(!FileExists(FileName))
+					sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
+				WorldParts.Load(FileName);
                 Player = FindPlayer();
                 SetLayer2Position(Player);
             }
@@ -1235,7 +1253,9 @@ void StageSelect()
             if (SelectedLevel > InstalledLevels)
                     SelectedLevel = InstalledLevels;
             sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-            WorldParts.Load(FileName);
+            if(!FileExists(FileName))
+				sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
+			WorldParts.Load(FileName);
             Player = FindPlayer();
             SetLayer2Position(Player);
             Input->Delay();
@@ -1254,7 +1274,9 @@ void StageSelect()
                 else
                 {
                     sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-                    WorldParts.Load(FileName);
+                    if(!FileExists(FileName))
+						sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
+					WorldParts.Load(FileName);
                     Player = FindPlayer();
                     SetLayer2Position(Player);
                 }
@@ -1264,7 +1286,9 @@ void StageSelect()
                 if (SelectedLevel < 1)
                     SelectedLevel = 1;
                 sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
-                WorldParts.Load(FileName);
+                if(!FileExists(FileName))
+					sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
+				WorldParts.Load(FileName);
                 Player = FindPlayer();
                 SetLayer2Position(Player);
             }
@@ -1278,6 +1302,8 @@ void StageSelect()
             if (SelectedLevel > InstalledLevels)
                 SelectedLevel = InstalledLevels;
             sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
+			if(!FileExists(FileName))
+				sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, SelectedLevel);
             WorldParts.Load(FileName);
             Player = FindPlayer();
             SetLayer2Position(Player);
@@ -1311,16 +1337,26 @@ void FindLevels()
 	int Teller=1;
 	char *FileName = new char[FILENAME_MAX];
 	InstalledLevels = 0;
+	bool homepath=false;
 	sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,Teller);
+	if(!FileExists(FileName))
+	{
+		homepath = true;
+		sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, Teller);
+	}
 	while (FileExists(FileName))
 	{
 		Teller+=25;
 		sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,Teller);
+		if(homepath)
+			sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, Teller);
 	}
 	while (!FileExists(FileName) && (Teller >=1) )
 	{
 		Teller--;
 		sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,Teller);
+		if(homepath)
+			sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName, Teller);
 	}
 	InstalledLevels=Teller;
 	delete[] FileName;
@@ -1339,6 +1375,8 @@ void Credits()
 	CInput *Input = new CInput(InputDelay);
 	char *Tekst = new char[500];
 	sprintf(FileName,"./blockdudefs/levelpacks/%s/credits.dat",LevelPackFileName);
+	if(!FileExists(FileName))
+		sprintf(FileName,"%s/.blockdude_levelpacks/%s/credits.dat", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName);
 	if(InstalledLevelPacksCount > 0)
 	{
 		Fp = fopen(FileName,"rt");
@@ -1346,13 +1384,13 @@ void Credits()
 		{
 			fscanf(Fp,"[Credits]\nCreator='%[^']'\n",LevelPackCreator);
 			fclose(Fp);
-			sprintf(Tekst,"Blockdude GP2X was created by\nWillems Davy - Willems Soft 2007.\nHttp://www.willemssoft.be\n\nLevelpack %s was created\nby %s.",LevelPackName,LevelPackCreator);
+			sprintf(Tekst,"Blockdude GP2X was created by\nWillems Davy - Willems Soft 2007-2024.\nHttp://www.willemssoft.be\n\nLevelpack %s was created\nby %s.",LevelPackName,LevelPackCreator);
 		}
 		else
-			sprintf(Tekst,"Blockdude GP2X was created by\nWillems Davy - Willems Soft 2007.\nHttp://www.willemssoft.be\n\nLevelpack %s was created\nby unknown person.",LevelPackName);
+			sprintf(Tekst,"Blockdude GP2X was created by\nWillems Davy - Willems Soft 2007-2024.\nHttp://www.willemssoft.be\n\nLevelpack %s was created\nby unknown person.",LevelPackName);
 	}
 	else
-		sprintf(Tekst,"Blockdude GP2X was created by\nWillems Davy - Willems Soft 2007\nHttp://www.willemssoft.be");
+		sprintf(Tekst,"Blockdude GP2X was created by\nWillems Davy - Willems Soft 2007-2024\nHttp://www.willemssoft.be");
 	while (GameState == GSCredits)
 	{
 	    if(GlobalSoundEnabled)
@@ -1675,13 +1713,28 @@ void LevelEditorMenu()
                             sprintf(LevelPackName,"%s",PackName);
                             sprintf(LevelPackFileName,"%s",PackName);
                             AddUnderScores(LevelPackFileName);
-                            sprintf(Tekst,"./blockdudefs/levelpacks/%s",LevelPackFileName);
+            
+							sprintf(Tekst,"%s", getenv("HOME") == NULL ? ".": getenv("HOME"));
 #ifdef WIN32
                             mkdir(Tekst);
 #else
                             mkdir(Tekst,S_IRWXO|S_IRWXU|S_IRWXG);
 #endif
-                            sprintf(FileName,"./blockdudefs/levelpacks/%s/credits.dat",LevelPackFileName);
+
+							sprintf(Tekst,"%s/.blockdude_levelpacks", getenv("HOME") == NULL ? ".": getenv("HOME"));
+#ifdef WIN32
+                            mkdir(Tekst);
+#else
+                            mkdir(Tekst,S_IRWXO|S_IRWXU|S_IRWXG);
+#endif
+
+							sprintf(Tekst,"%s/.blockdude_levelpacks/%s", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName);
+#ifdef WIN32
+                            mkdir(Tekst);
+#else
+                            mkdir(Tekst,S_IRWXO|S_IRWXU|S_IRWXG);
+#endif
+							sprintf(FileName,"%s/.blockdude_levelpacks/%s/credits.dat", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName);
                             Fp = fopen(FileName,"wt");
                             if (Fp)
                             {
@@ -1722,7 +1775,7 @@ void LevelEditorMenu()
                         {
                             for(Teller=1;Teller<INT_MAX;Teller++)
                             {
-                                sprintf(Tekst,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,Teller);
+                                sprintf(Tekst,"%s/.blockdude_levelpacks/%s/level%d.lev",getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName,Teller);
                                 if(FileExists(Tekst))
                                 {
                                     remove(Tekst);
@@ -1730,12 +1783,12 @@ void LevelEditorMenu()
                                 else
                                     break;
                             }
-                            sprintf(Tekst,"./blockdudefs/levelpacks/%s/credits.dat",LevelPackFileName);
+                            sprintf(Tekst,"%s/.blockdude_levelpacks/%s/credits.dat", getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName);
                             if(FileExists(Tekst))
                             {
                                 remove(Tekst);
                             }
-                            sprintf(Tekst,"./blockdudefs/levelpacks/%s",LevelPackFileName);
+                            sprintf(Tekst,"%s/.blockdude_levelpacks/%s",getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName);
                             rmdir(Tekst);
 
                             SearchForLevelPacks();
@@ -1868,6 +1921,8 @@ void Game()
             else
             {
                 sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
+				if(!FileExists(FileName))
+					sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev",getenv("HOME") == NULL ? ".": getenv("HOME"), LevelPackFileName,SelectedLevel);
                 WorldParts.Load(FileName);
                 Player = FindPlayer();
                 SetLayer2Position(Player);
@@ -2088,7 +2143,7 @@ void Game()
 					GameState = GSLevelEditor;
 				else
 				{
-					sprintf(FileName,"./temp.lev");
+					sprintf(FileName,"%s/.blockdude_temp.lev",getenv("HOME") == NULL ? ".": getenv("HOME"));
 					WorldParts.Load(FileName);
 					Player = FindPlayer();
                     SetLayer2Position(Player);
@@ -2146,8 +2201,9 @@ void LevelEditor()
 	SDL_FreeSurface(Tmp1);
 	if (StageReload)
 	{
-		WorldParts.Load("./temp.lev");
-		remove("./temp.lev");
+		sprintf(FileName,"%s/.blockdude_temp.lev",getenv("HOME") == NULL ? ".": getenv("HOME"));
+		WorldParts.Load(FileName);
+		remove(FileName);
 		StageReload=false;
 	}
     for (Teller = 0;Teller< WorldParts.ItemCount;Teller++)
@@ -2227,9 +2283,9 @@ void LevelEditor()
                     if (!LevelErrorsFound())
                     {
                         if (SelectedLevel==0)
-                                sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,InstalledLevels+1);
+                            sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev",getenv("HOME") == NULL ? ".": getenv("HOME"),LevelPackFileName,InstalledLevels+1);
                         else
-                            sprintf(FileName,"./blockdudefs/levelpacks/%s/level%d.lev",LevelPackFileName,SelectedLevel);
+                            sprintf(FileName,"%s/.blockdude_levelpacks/%s/level%d.lev",getenv("HOME") == NULL ? ".": getenv("HOME"),LevelPackFileName,SelectedLevel);
                         WorldParts.Save(FileName);
                         FindLevels();
                         if (SelectedLevel==0)
@@ -2250,7 +2306,8 @@ void LevelEditor()
         {
             if(!LevelErrorsFound())
             {
-                WorldParts.Save("./temp.lev");
+				sprintf(FileName,"%s/.blockdude_temp.lev",getenv("HOME") == NULL ? ".": getenv("HOME"));
+                WorldParts.Save(FileName);
                 StageReload = true;
                 GameState=GSGame;
                 WorldParts.CenterVPOnPlayer();
