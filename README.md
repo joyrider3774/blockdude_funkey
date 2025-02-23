@@ -48,6 +48,10 @@ The level editor will also automatically choose a filename for the levels, you d
 Once your level pack is finished you can just zip your level pack directory and release it to the public. It is located in the home directory
 Other people will then have to unzip your level pack in the level packs in the level pack directory from the home directory and it will be shown inside the game.
 
+## Preview for retrofe 
+![preview](metadata/blockdude-preview.png)
+
+- Created by me but based on style made from other images by TommyShots from funkey discord
 
 ## Credits
 - Blockdude GP2X Is created by Willems Davy Aka Joyrider - Willems Soft 2006-2024
