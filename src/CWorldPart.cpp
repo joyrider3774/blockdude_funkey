@@ -314,8 +314,8 @@ CPlayer::CPlayer(const int PlayFieldXin,const int PlayFieldYin) : CWorldPart(Pla
 	NeedToMoveRight = false;
 	Z = ZPlayer;
 	Group = GroupPlayer;
-	HalfWindowWidth = WINDOW_WIDTH / 2;
-	HalfWindowHeight = WINDOW_HEIGHT / 2;
+	HalfWindowWidth = ORIG_WINDOW_WIDTH / 2;
+	HalfWindowHeight = ORIG_WINDOW_HEIGHT / 2;
 	while(HalfWindowWidth % TileWidth !=0)
 		HalfWindowWidth++;	
 	while(HalfWindowHeight % TileHeight !=0)

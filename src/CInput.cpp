@@ -25,7 +25,7 @@ void CInput::Update() {
         if(Event.type == SDL_KEYDOWN)
 		{
 #ifdef FUNKEY
-			if(Event.key.keysym.sym == SDLK_q)
+			if(Event.key.keysym.sym == BUT_QUIT)
 				SpecialsHeld[SPECIAL_QUIT_EV] = true;
 
 #endif 			

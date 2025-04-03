@@ -23,8 +23,8 @@ CViewPort::CViewPort(int MinX,int MinY, int MaxX,int MaxY,int MinX2,int MinY2,in
 		VPMaxY = NrOfRowsVisible;
 		MinScreenX =0;
 		MinScreenY = 0;
-		MaxScreenX = WINDOW_WIDTH;
-		MaxScreenY = WINDOW_HEIGHT;
+		MaxScreenX = ORIG_WINDOW_WIDTH;
+		MaxScreenY = ORIG_WINDOW_HEIGHT;
 	}
 	if ((MinX2 < NrOfCols) && (MinX2 >= 0) && (MaxX2 +1< NrOfCols) && (MaxX2 >= 0) &&
 		(MinY2 < NrOfRows) && (MinY2 >= 0) && (MaxY2 +1< NrOfRows) && (MaxY2 >= 0))

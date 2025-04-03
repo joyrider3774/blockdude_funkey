@@ -15,6 +15,7 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <SDL_rotozoom.h>
 #include <SDL_gfxPrimitives.h>
 #include <SDL_framerate.h>
 #include <SDL_keysym.h>
@@ -38,7 +39,7 @@ SDL_Surface *IMGBackground=NULL,*IMGFloor=NULL,*IMGPlayer=NULL,*IMGBox=NULL,*IMG
             *IMGRoofCornerRight=NULL,*IMGRoofDownRight=NULL,*IMGRoofDownLeft=NULL,*IMGRoofCornerBoth=NULL,*IMGGrid=NULL,*IMGLayer2=NULL;
 
 unsigned char HashTable[1004] = {0xE4,0xF6,0xD7,0xA4,0xA5,0xC3,0xA3,0xE5,0xA4,0xF8,0xA3,0xF6,0xB5,0x98,0xA3,0xA7,0xB9,0xA0,0xD9,0xD6,0xE6,0x29,0x49,0xF8,0xB9,0xF0,0x79,0xA6,0x88,0xA8,0xC6,0xC2,0xF2,0xB7,0x79,0xC0,0xF0,0xD0,0xA8,0xE1,0xE1,0xF9,0xA5,0xE5,0xF1,0xE4,0xC7,0xE8,0xD9,0xB7,0xC0,0xE1,0xC0,0xB4,0xA9,0xF8,0xF8,0xF8,0xA1,0xA4,0xD0,0xC6,0x06,0xB9,0xA1,0xB0,0xF0,0xE8,0xB0,0xE5,0xC3,0xC8,0xA1,0xB2,0xF1,0xE2,0xE0,0xF0,0xF8,0xA5,0xE6,0xF2,0xB4,0xF7,0x79,0xB5,0x75,0xB0,0xF1,0xA6,0xC9,0xE2,0xB6,0x68,0xD9,0xA0,0xE7,0xD1,0xB4,0x51,0xD9,0xE9,0x96,0x61,0xD2,0xC2,0xC2,0x06,0x47,0x86,0x88,0xF4,0xC7,0x88,0xA0,0xA9,0xB1,0xD2,0xE9,0xF1,0x93,0xF4,0x35,0xC6,0xB2,0xC8,0xB8,0xB0,0xA8,0xE9,0xC1,0xA4,0xF5,0xD6,0xD1,0xC8,0xD3,0xA9,0xE9,0xA9,0xF4,0xB4,0xA3,0x57,0xE1,0xC5,0xF1,0xB7,0xB6,0xB2,0xE3,0x45,0x64,0xE3,0xD9,0xE5,0xB5,0xE2,0xE8,0xC8,0xB5,0xE7,0xD3,0xB0,0xD2,0xF7,0x81,0xB2,0xE4,0xA8,0x00,0xC9,0xD5,0xD4,0x86,0xC9,0xB1,0xA2,0xA0,0xD3,0xE3,0xD5,0xF7,0xE0,0xF9,0xE5,0xE2,0xD1,0xA5,0xD4,0xF4,0xC6,0xB4,0xD3,0xA2,0xD6,0xD3,0x35,0xE4,0xE3,0xC4,0xB6,0x18,0xD7,0xE7,0xC5,0xE2,0x59,0xA0,0xB5,0xA7,0xC5,0xF6,0xA7,0xC2,0xD7,0xA2,0xB5,0xB9,0xF6,0x81,0xA3,0xA5,0x00,0xA2,0xA8,0xE7,0xD5,0x87,0xC8,0xE9,0xD7,0xE6,0xA0,0x54,0xF9,0xF9,0xF4,0xB4,0xF4,0xE9,0xA7,0xD0,0x74,0xD0,0xE7,0x24,0xD9,0xB0,0xE8,0xE3,0xF1,0xF7,0xF7,0x88,0x97,0xC0,0xE0,0xD2,0xF3,0xC2,0xA1,0xC4,0xE1,0xF8,0xE8,0xB1,0x76,0x97,0xE7,0xB6,0x96,0xA7,0xD8,0xA4,0xF1,0xA0,0xF3,0xE8,0xE7,0x76,0xE3,0xB1,0xC9,0xE4,0xB4,0xF0,0xA4,0xD0,0x28,0xB8,0xF7,0xD9,0xD3,0xE5,0xC9,0x81,0xF7,0xC0,0xD9,0xC9,0xE3,0xA8,0xD6,0xB9,0xA7,0xF9,0xD0,0xD8,0x54,0xF6,0xF9,0xB8,0xC8,0xC9,0xB9,0xF0,0xF4,0xD1,0xA4,0xD0,0xE6,0xA8,0xB6,0xD2,0xB0,0xE9,0xE9,0xE9,0xB7,0xD9,0xD4,0xE6,0xF0,0xA4,0xC7,0xF1,0xC0,0xC2,0xA8,0xA7,0x14,0x25,0xA1,0xB6,0xB9,0xD5,0x78,0xC1,0xD1,0xC6,0x93,0xE8,0xE7,0xE7,0xA9,0xA2,0xA8,0x89,0xA1,0xA6,0xF9,0xA8,0xF7,0xE4,0xD8,0xA2,0xD2,0xB0,0x39,0xD1,0xC5,0x72,0xB0,0xD6,0xC6,0xA0,0xE9,0xE5,0xC1,0xC2,0xF9,0xF3,0xB2,0xC8,0xD0,0xD2,0xD1,0xC1,0xD7,0x53,0x93,0xB4,0xF9,0xB0,0xD0,0xD4,0xF5,0xE4,0xE4,0x13,0xB2,0xE9,0x70,0xB3,0xB2,0xD8,0xF0,0xC0,0xC1,0xB0,0xE8,0xA3,0xE7,0x33,0xB1,0xC0,0xA7,0x17,0xD4,0xA9,0xE5,0xF6,0xF3,0xF3,0xA3,0xE0,0xD5,0xE2,0x71,0xB7,0xB4,0xA9,0xD6,0xC1,0xC5,0xA3,0xB2,0xD7,0xB6,0xE8,0xC5,0xF0,0x10,0xA6,0xB0,0xC3,0xA3,0xA0,0xB2,0xF6,0xB9,0xF4,0xD8,0xD5,0xF8,0xB9,0xE3,0x70,0xD1,0xF1,0xA6,0xE6,0xE5,0xA8,0xD5,0xC9,0xC1,0xA5,0xE5,0x61,0xF4,0xB2,0xA9,0xA4,0xF2,0xE8,0xB7,0xD7,0xA1,0xD0,0xF4,0xF9,0xE4,0xE8,0xC6,0xB3,0xC4,0xB2,0xC9,0xE3,0x49,0xC3,0x62,0xA6,0xF3,0xB0,0x57,0x65,0xC4,0xF6,0xB9,0x23,0xB8,0xB3,0xA9,0xE6,0xB7,0xA5,0xE8,0xF6,0xC9,0xE7,0x63,0xF7,0xD9,0xA5,0xA5,0xD2,0xD4,0xA6,0xF2,0x94,0x04,0xB6,0x85,0xA3,0xD3,0x59,0xA3,0xA8,0x69,0xF1,0xB9,0xD1,0xD1,0xE5,0xE5,0x57,0xB0,0xD5,0x59,0xD4,0xD9,0x52,0xB4,0xA8,0x75,0xF0,0xE0,0x20,0xA1,0xE7,0x69,0xA2,0xC0,0xB1,0xA3,0xE5,0xB9,0xF5,0xB9,0xB5,0xE1,0xF3,0xB7,0x56,0xA1,0xA4,0xA9,0xA4,0xE7,0xC5,0xC7,0xC7,0x32,0xB7,0xA6,0xB4,0xB2,0xF6,0xB1,0xC4,0xB5,0xC4,0xC1,0xE1,0x97,0xB1,0xE3,0x37,0xA6,0xD8,0xC3,0xF1,0xD5,0xE9,0xF2,0xE2,0xF6,0xF3,0xF6,0xF4,0x51,0xE7,0xE9,0xC1,0xE8,0xA8,0x69,0xD3,0xB4,0xD8,0xD6,0xE8,0xD8,0x47,0xE1,0xA8,0xA0,0x94,0xB5,0xC2,0xD3,0xF6,0x28,0xF5,0x21,0xD7,0x48,0xC4,0xD8,0xF2,0xC7,0xC0,0xA7,0xF6,0xC7,0xE7,0x64,0xB5,0xD5,0x97,0xA0,0xD6,0xF7,0xC4,0xF7,0xD0,0xD7,0xA8,0xD7,0x28,0xC2,0xE5,0xD0,0xC2,0xF2,0xC8,0xF9,0xE5,0x08,0xD3,0xA0,0xA0,0xB2,0xD3,0x29,0xF0,0xB1,0xD0,0xB2,0xD7,0xF1,0x47,0xF2,0xD4,0xD3,0x53,0x92,0xC4,0xF9,0xA2,0xE8,0xC3,0xA9,0xF8,0xB1,0xE4,0x90,0xD0,0xE4,0x26,0x18,0xB4,0xF8,0xE7,0xC7,0xE0,0xF9,0xC1,0x36,0xE3,0xC2,0xE6,0xC9,0xC2,0xF8,0xA1,0x26,0xE7,0xC1,0x57,0xE9,0xD1,0xC8,0xC3,0xB2,0xE1,0x86,0xA5,0xE8,0xB4,0xA3,0xB5,0xD7,0x89,0xD5,0xF7,0xD0,0xD6,0xD7,0xB4,0x41,0xE1,0xA2,0xD5,0xF1,0xA8,0xF5,0xF7,0xC8,0xA3,0xB1,0xC0,0xC7,0x83,0x65,0xE6,0x46,0xA8,0xA3,0xE8,0xC5,0xF9,0xC2,0xD6,0xA5,0xD5,0xA5,0xA8,0xB6,0xE0,0xD0,0xC4,0xE1,0xF0,0x08,0x06,0x45,0xA7,0xF1,0xA1,0xE8,0xF3,0xF1,0xE2,0xC4,0xA6,0xF0,0xF3,0xD3,0xB2,0xE5,0xC5,0x85,0xA6,0xC7,0xD5,0xD4,0xD7,0xC2,0xC8,0xC8,0xD2,0xB8,0xA4,0x79,0x06,0xF7,0xE0,0xB6,0xF4,0xF4,0xC2,0xD1,0xB4,0xA4,0xB5,0xA8,0xC0,0xB2,0xB9,0xF7,0xC0,0xD6,0xD6,0xC3,0xF5,0xA3,0xF5,0xA7,0xE5,0xE1,0xB0,0xA5,0xE0,0xC3,0x41,0xD3,0xB2,0xF9,0xF2,0x19,0xB3,0xA7,0x58,0x40,0xB1,0x86,0xD5,0x71,0xF8,0xF6,0xD2,0xF2,0xA5,0xF4,0xB7,0x80,0xE5,0x03,0xF8,0x14,0xF5,0xE4,0xE7,0xE2,0xB9,0xA6,0xB5,0xE2,0xB5,0xD8,0xC7,0xE5,0xC5,0xF9,0xD4,0xD3,0xE5,0xD9,0xE8,0x79,0xD2,0xE3,0xF0,0xA1,0xF8,0xD8,0x31,0x78,0xB9,0xA9,0x41,0xC1,0xB1,0xC6,0x52,0xC5,0xA7,0xD0,0xF9,0xF5,0xA8,0xF6,0xA3,0xA3,0xD0,0xA5,0xF3,0xB1,0xB1,0x31,0xE0,0xC5,0xA7,0x29,0xC0,0xE1,0xD4,0xF7,0x15,0xC2,0xF3,0xA1,0xC9,0xF3,0xE0,0xA5,0xB6,0xE6,0xE5,0xB1,0xA3,0xB3,0xE7,0xF5,0xD8,0x93,0xF8,0xB2,0x94,0xC8,0xD2,0xE2,0xB0,0xF9,0xF1,0xB4,0xE0,0xD5,0x65,0x81,0xC4,0xC7,0xD0,0xE8,0xA7,0xA2,0xF7,0x45,0xA0,0xE9,0xC5,0xB6,0xE2,0xF2,0xE6,0xA7,0xE8,0x28,0xA6,0xE5,0x90,0xF0,0xD6,0xE1,0xC4,0xD2,0xD5,0xF0,0xA5,0xB1,0xC6,0xA0,0xC1,0xF5,0xB1,0xA4,0xD3,0xF3,0xA3,0xF3,0x10,0xE8,0xA9,0xC1,0xB2,0xB8,0xA5,0xD4,0x41,0xB4,0xC6,0xF7,0xC6,0xF9,0xD9,0xD0,0xC2,0xE9,0xD5,0xC7};
-SDL_Surface* Screen;
+SDL_Surface* Screen, *Buffer;
 TTF_Font* font,* BigFont,*MonoFont,*BigFontSkin;
 SDL_Joystick *Joystick;
 GameStates GameState = GSTitleScreen;
@@ -56,6 +57,39 @@ Mix_Chunk *Sounds[NrOfSounds];
 char InstalledSkins[MaxSkins][FILENAME_MAX];
 char SkinName[FILENAME_MAX];
 FPSmanager Fpsman;
+int WINDOW_WIDTH = ORIG_WINDOW_WIDTH;
+int WINDOW_HEIGHT = ORIG_WINDOW_HEIGHT;
+Uint32 FrameTicks = 0;
+Uint32 FrameCount = 0;
+Uint32 LastFps = 0;
+bool ShowFps = false;
+bool noDelay = false;
+bool fullscreen = false;
+
+void HandleFPS()
+{
+	if(!ShowFps)
+		return;
+	FrameCount++;
+	char Text[100];
+	sprintf(Text, "FPS:%d", LastFps);
+    SDL_Color Col = {0, 0, 0, 255};
+	SDL_Surface *Tmp = TTF_RenderText_Solid(font, Text, Col);
+	boxRGBA(Screen,0,0,Tmp->w + 6, Tmp->h + 6,255,255,255,255);
+	SDL_Rect Dst;
+	Dst.x = 3;
+	Dst.y = 3;
+	Dst.w = Tmp->w;
+	Dst.h = Tmp->h;
+	SDL_BlitSurface(Tmp, NULL, Screen, &Dst);
+	SDL_FreeSurface(Tmp);
+	if(SDL_GetTicks() - FrameTicks >= 1000)
+	{
+		LastFps = FrameCount;
+		FrameCount = 0;
+		FrameTicks = SDL_GetTicks();
+	}
+}
 
 void LoadSettings()
 {
@@ -588,9 +622,28 @@ void NextSkin()
             sprintf(SkinName,"%s",InstalledSkins[SelectedSkin]);
             sprintf(Text,"Please Wait Loading Skin:\n%s",SkinName);
         }
-        boxRGBA(Screen,0,0,WINDOW_WIDTH-1,48,255,255,255,200);
-        boxRGBA(Screen,1,1,WINDOW_WIDTH-2,47,0,0,0,200);
-        WriteText(Screen,BigFontSkin,Text,strlen(Text),5,0,0,Color);
+        boxRGBA(Buffer,0,0,WINDOW_WIDTH-1,48,255,255,255,200);
+        boxRGBA(Buffer,1,1,WINDOW_WIDTH-2,47,0,0,0,200);
+        WriteText(Buffer,BigFontSkin,Text,strlen(Text),5,0,0,Color);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
         LoadGraphics();
     }
@@ -615,9 +668,28 @@ void PreviousSkin()
             sprintf(SkinName,"%s",InstalledSkins[SelectedSkin]);
             sprintf(Text,"Please Wait Loading Skin:\n%s",SkinName);
         }
-        boxRGBA(Screen,0,0,WINDOW_WIDTH-1,48,255,255,255,200);
-        boxRGBA(Screen,1,1,WINDOW_WIDTH-2,47,0,0,0,200);
-        WriteText(Screen,BigFontSkin,Text,strlen(Text),5,0,0,Color);
+        boxRGBA(Buffer,0,0,WINDOW_WIDTH-1,48,255,255,255,200);
+        boxRGBA(Buffer,1,1,WINDOW_WIDTH-2,47,0,0,0,200);
+        WriteText(Buffer,BigFontSkin,Text,strlen(Text),5,0,0,Color);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
         LoadGraphics();
     }
@@ -691,10 +763,29 @@ bool StageDone(CPlayer *Player)
 bool AskQuestion(char *Msg)
 {
 	CInput *Input = new CInput(InputDelay);
-	boxRGBA(Screen,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-	rectangleRGBA(Screen,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-	rectangleRGBA(Screen,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-	WriteText(Screen,font,Msg,strlen(Msg),25,80,2,MenuTextColor);
+	boxRGBA(Buffer,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+	rectangleRGBA(Buffer,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+	rectangleRGBA(Buffer,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+	WriteText(Buffer,font,Msg,strlen(Msg),25,80,2,MenuTextColor);
+    if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+    {
+        double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+        if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+            wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+        SDL_Rect dst;
+        dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+        dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+        dst.w = ORIG_WINDOW_WIDTH * wscale;
+        dst.h = ORIG_WINDOW_HEIGHT * wscale;
+        SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+        SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+        SDL_FreeSurface(ScreenBufferZoom);
+    }
+    else
+    {
+        SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+    }
+    HandleFPS();
     SDL_Flip(Screen);
 	{
 		while (!( Input->SpecialsHeld[SPECIAL_QUIT_EV] || Input->KeyboardHeld[BUT_A] || Input->KeyboardHeld[BUT_B]))
@@ -705,7 +796,8 @@ bool AskQuestion(char *Msg)
 			{
 				Mix_PlayMusic(Music[0],0);
 			}
-			SDL_framerateDelay(&Fpsman);
+			if(!noDelay)
+                SDL_framerateDelay(&Fpsman);
 		}
 		if (Input->SpecialsHeld[SPECIAL_QUIT_EV])
             GameState = GSQuit;
@@ -721,10 +813,29 @@ bool AskQuestion(char *Msg)
 void PrintForm(char *msg)
 {
     CInput *Input = new CInput(InputDelay);
-	boxRGBA(Screen,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-	rectangleRGBA(Screen,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-	rectangleRGBA(Screen,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-	WriteText(Screen,font,msg,strlen(msg),22,80,2,MenuTextColor);
+	boxRGBA(Buffer,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+	rectangleRGBA(Buffer,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+	rectangleRGBA(Buffer,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+	WriteText(Buffer,font,msg,strlen(msg),22,80,2,MenuTextColor);
+    if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+    {
+        double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+        if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+            wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+        SDL_Rect dst;
+        dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+        dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+        dst.w = ORIG_WINDOW_WIDTH * wscale;
+        dst.h = ORIG_WINDOW_HEIGHT * wscale;
+        SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+        SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+        SDL_FreeSurface(ScreenBufferZoom);
+    }
+    else
+    {
+        SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+    }
+    HandleFPS();
     SDL_Flip(Screen);
     while (!( Input->SpecialsHeld[SPECIAL_QUIT_EV] || Input->KeyboardHeld[BUT_A]))
     {
@@ -734,7 +845,8 @@ void PrintForm(char *msg)
         {
             Mix_PlayMusic(Music[0],0);
         }
-        SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+            SDL_framerateDelay(&Fpsman);
     }
 
 	delete Input;
@@ -925,12 +1037,12 @@ char *GetString(const char *NameIn,const char *Msg)
         }
 
 
-		SDL_BlitSurface(IMGTitleScreen,NULL,Screen,NULL);
-		boxRGBA(Screen,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-		rectangleRGBA(Screen,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-		rectangleRGBA(Screen,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-		WriteText(Screen,font,Msg,strlen(Msg),25,85,2,MenuTextColor);
-		WriteText(Screen,MonoFont,PackName,strlen(PackName),45,110,2,MenuTextColor);
+		SDL_BlitSurface(IMGTitleScreen,NULL,Buffer,NULL);
+		boxRGBA(Buffer,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+		rectangleRGBA(Buffer,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		rectangleRGBA(Buffer,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		WriteText(Buffer,font,Msg,strlen(Msg),25,85,2,MenuTextColor);
+		WriteText(Buffer,MonoFont,PackName,strlen(PackName),45,110,2,MenuTextColor);
 		if (Selection > 0)
 		{
 			sprintf(Tekst," ");
@@ -940,11 +1052,31 @@ char *GetString(const char *NameIn,const char *Msg)
 		}
 		else
 			sprintf(Tekst,"_");
-		WriteText(Screen,MonoFont,Tekst,strlen(Tekst),45,112,2,MenuTextColor);
+		WriteText(Buffer,MonoFont,Tekst,strlen(Tekst),45,112,2,MenuTextColor);
 		sprintf(Tekst,"Use Up,Down,Left,right\n %s=Ok %s=Cancel","A","B");
-		WriteText(Screen,font,Tekst,strlen(Tekst),25,135,2,MenuTextColor);
+		WriteText(Buffer,font,Tekst,strlen(Tekst),25,135,2,MenuTextColor);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
-        SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+            SDL_framerateDelay(&Fpsman);
 	}
 	PackName[MaxSelection+1] = '\0';
 	while ((PackName[0] == ' ') && (MaxSelection>-1))
@@ -1075,16 +1207,12 @@ void DrawLayer2(SDL_Surface *Surface)
 
 void StageSelect()
 {
-    SDL_Surface *Tmp,*Tmp1;
 	int Teller;
 	int alpha = 0;
 	char *FileName = new char[FILENAME_MAX];
 	char Tekst[500];
 	char Tekst1[500];
 	CPlayer *Player;
-    Tmp1 = SDL_CreateRGBSurface(SDL_SWSURFACE,WINDOW_WIDTH,WINDOW_HEIGHT,16,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
-	Tmp = SDL_DisplayFormat(Tmp1);
-	SDL_FreeSurface(Tmp1);
     CInput *Input = new CInput(InputDelay);
 	if (SelectedLevel > 0)
 	{
@@ -1105,12 +1233,12 @@ void StageSelect()
             {
                 Mix_PlayMusic(Music[0],0);
             }
-		SDL_BlitSurface(IMGBackground,NULL,Tmp,NULL);
+		SDL_BlitSurface(IMGBackground,NULL,Buffer,NULL);
         if(SelectedLevel >0)
-            DrawLayer2(Tmp);
-		WorldParts.Draw(Tmp);
-		boxRGBA(Tmp,0,0,WINDOW_WIDTH-1,13,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-		rectangleRGBA(Tmp,0,-1,WINDOW_WIDTH-1,13,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+            DrawLayer2(Buffer);
+		WorldParts.Draw(Buffer);
+		boxRGBA(Buffer,0,0,WINDOW_WIDTH-1,13,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+		rectangleRGBA(Buffer,0,-1,WINDOW_WIDTH-1,13,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
 		if (SelectedLevel ==0)
 			sprintf(Tekst,"Level Pack: %s -> %d Levels - (%s) Create New",LevelPackName,InstalledLevels,"A");
 		else
@@ -1121,7 +1249,7 @@ void StageSelect()
 					sprintf(Tekst,"Level Pack: %s Level:%d/%d - (%s) Play",LevelPackName,SelectedLevel,InstalledLevels,"A");
 				else
 					sprintf(Tekst,"Level Pack: %s Level:%d/%d - Level is locked!",LevelPackName,SelectedLevel,InstalledLevels);
-		WriteText(Tmp,font,Tekst,strlen(Tekst),2,0,0,MenuTextColor);
+		WriteText(Buffer,font,Tekst,strlen(Tekst),2,0,0,MenuTextColor);
 
         Input->Update();
 
@@ -1315,20 +1443,38 @@ void StageSelect()
             if(alpha+AlphaInc > MaxAlpha)
             {
                 alpha = 255;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
             else
             {
                 alpha+=AlphaInc;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
         }
-        SDL_BlitSurface(Tmp,NULL,Screen,NULL);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
-        SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+            SDL_framerateDelay(&Fpsman);
 	}
 	delete[] FileName;
-	SDL_FreeSurface(Tmp);
 }
 
 
@@ -1365,13 +1511,9 @@ void FindLevels()
 void Credits()
 {
     int alpha = 0;
-    SDL_Surface *Tmp,*Tmp1;
 	char *LevelPackCreator = new char[21];
 	char FileName[FILENAME_MAX];
 	FILE *Fp;
-    Tmp1 = SDL_CreateRGBSurface(SDL_SWSURFACE,WINDOW_WIDTH,WINDOW_HEIGHT,16,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
-	Tmp = SDL_DisplayFormat(Tmp1);
-	SDL_FreeSurface(Tmp1);
 	CInput *Input = new CInput(InputDelay);
 	char *Tekst = new char[500];
 	sprintf(FileName,"./blockdudefs/levelpacks/%s/credits.dat",LevelPackFileName);
@@ -1398,7 +1540,7 @@ void Credits()
         {
             Mix_PlayMusic(Music[0],0);
         }
-		SDL_BlitSurface(IMGTitleScreen,NULL,Tmp,NULL);
+		SDL_BlitSurface(IMGTitleScreen,NULL,Buffer,NULL);
 		Input->Update();
         if(Input->SpecialsHeld[SPECIAL_QUIT_EV])
             GameState = GSQuit;
@@ -1409,43 +1551,57 @@ void Credits()
         {
             GameState=GSTitleScreen;
         }
-		boxRGBA(Tmp,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-		rectangleRGBA(Tmp,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-		rectangleRGBA(Tmp,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-		WriteText(Tmp,font,Tekst,strlen(Tekst),25,80,2,MenuTextColor);
+		boxRGBA(Buffer,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+		rectangleRGBA(Buffer,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		rectangleRGBA(Buffer,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		WriteText(Buffer,font,Tekst,strlen(Tekst),25,80,2,MenuTextColor);
         if (alpha < 255)
         {
             if(alpha+AlphaInc > MaxAlpha)
             {
                 alpha = 255;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
             else
             {
                 alpha+=AlphaInc;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
         }
-        SDL_BlitSurface(Tmp,NULL,Screen,NULL);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
-        SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+            SDL_framerateDelay(&Fpsman);
 	}
 	delete[] Tekst;
 	delete[] LevelPackCreator;
 	delete Input;
-	SDL_FreeSurface(Tmp);
 }
 
 
 void TitleScreen()
 {
 	int alpha = 0;
-    SDL_Surface *Tmp,*Tmp1;
 	int Teller, Selection = 1;
 	char *Tekst = new char[300];
-	Tmp1 = SDL_CreateRGBSurface(SDL_SWSURFACE,WINDOW_WIDTH,WINDOW_HEIGHT,16,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
-	Tmp = SDL_DisplayFormat(Tmp1);
-	SDL_FreeSurface(Tmp1);
 	CInput *Input = new CInput(InputDelay);
 	while (GameState == GSTitleScreen)
 	{
@@ -1455,7 +1611,7 @@ void TitleScreen()
         	    Mix_PlayMusic(Music[0],0);
 			}
 
-		SDL_BlitSurface(IMGTitleScreen,NULL,Tmp,NULL);
+		SDL_BlitSurface(IMGTitleScreen,NULL,Buffer,NULL);
 		Input->Update();
 
 		if(Input->KeyboardHeld[BUT_SELECT] || Input->SpecialsHeld[SPECIAL_QUIT_EV])
@@ -1566,11 +1722,11 @@ void TitleScreen()
             }
 
         }
-		boxRGBA(Tmp,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-		rectangleRGBA(Tmp,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-		rectangleRGBA(Tmp,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		boxRGBA(Buffer,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+		rectangleRGBA(Buffer,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		rectangleRGBA(Buffer,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
 		sprintf(Tekst,"Play Selected LevelPack\nLevel Editor\n<%s>\nCredits\nQuit",LevelPackName);
-		WriteText(Tmp,BigFont,Tekst,strlen(Tekst),50,83,2,MenuTextColor);
+		WriteText(Buffer,BigFont,Tekst,strlen(Tekst),50,83,2,MenuTextColor);
 		if (Selection > 1)
 		{
 			sprintf(Tekst,"\n");
@@ -1580,42 +1736,56 @@ void TitleScreen()
 		}
 		else
 			sprintf(Tekst,">>");
-		WriteText(Tmp,BigFont,Tekst,strlen(Tekst),25,83,2,MenuTextColor);
+		WriteText(Buffer,BigFont,Tekst,strlen(Tekst),25,83,2,MenuTextColor);
 		if (alpha < 255)
         {
             if(alpha+AlphaInc > MaxAlpha)
             {
                 alpha = 255;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
             else
             {
                 alpha+=AlphaInc;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
         }
-        SDL_BlitSurface(Tmp,NULL,Screen,NULL);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
-        SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+            SDL_framerateDelay(&Fpsman);
 
 	}
 	delete[] Tekst;
 	delete Input;
-	SDL_FreeSurface(Tmp);
 }
 
 
 void LevelEditorMenu()
 {
 	int alpha = 0;
-    SDL_Surface *Tmp,*Tmp1;
 	FILE *Fp;
 	int Teller, Selection = 1;
 	char *PackName,*CreatorName;
 	char FileName[FILENAME_MAX];
-    Tmp1 = SDL_CreateRGBSurface(SDL_SWSURFACE,WINDOW_WIDTH,WINDOW_HEIGHT,16,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
-	Tmp = SDL_DisplayFormat(Tmp1);
-	SDL_FreeSurface(Tmp1);
 	char *Tekst = new char[300];
 	CInput *Input = new CInput(InputDelay);
 	while (GameState == GSLevelEditorMenu)
@@ -1625,7 +1795,7 @@ void LevelEditorMenu()
             {
                 Mix_PlayMusic(Music[0],0);
             }
-        SDL_BlitSurface(IMGTitleScreen,NULL,Tmp,NULL);
+        SDL_BlitSurface(IMGTitleScreen,NULL,Buffer,NULL);
 		Input->Update();
 
 		if(Input->SpecialsHeld[SPECIAL_QUIT_EV])
@@ -1705,7 +1875,7 @@ void LevelEditorMenu()
                     Input->Reset();
                     if (strlen(PackName) > 0)
                     {
-                        SDL_BlitSurface(IMGTitleScreen,NULL,Screen,NULL);
+                        SDL_BlitSurface(IMGTitleScreen,NULL,Buffer,NULL);
                         CreatorName = GetString("","Enter the Levelpack Creator name:");
                         Input->Reset();
                         if(strlen(CreatorName)>0)
@@ -1804,11 +1974,11 @@ void LevelEditorMenu()
                     break;
             }
         }
-		boxRGBA(Tmp,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-		rectangleRGBA(Tmp,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-		rectangleRGBA(Tmp,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		boxRGBA(Buffer,20,70,220,165,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+		rectangleRGBA(Buffer,20,70,220,165,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+		rectangleRGBA(Buffer,21,71,219,164,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
 		sprintf(Tekst,"Create New Levelpack\nLoad Selected LevelPack\nDelete Selected Levelpack\n<%s>\nMain Menu",LevelPackName);
-		WriteText(Tmp,BigFont,Tekst,strlen(Tekst),50,83,2,MenuTextColor);
+		WriteText(Buffer,BigFont,Tekst,strlen(Tekst),50,83,2,MenuTextColor);
 		if (Selection > 1)
 		{
 			sprintf(Tekst,"\n");
@@ -1818,27 +1988,45 @@ void LevelEditorMenu()
 		}
 		else
 			sprintf(Tekst,">>");
-		WriteText(Tmp,BigFont,Tekst,strlen(Tekst),25,83,2,MenuTextColor);
+		WriteText(Buffer,BigFont,Tekst,strlen(Tekst),25,83,2,MenuTextColor);
 		if (alpha < 255)
         {
             if(alpha+AlphaInc > MaxAlpha)
             {
                 alpha = 255;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
             else
             {
                 alpha+=AlphaInc;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
         }
-        SDL_BlitSurface(Tmp,NULL,Screen,NULL);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
-        SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+            SDL_framerateDelay(&Fpsman);
 	}
 	delete[] Tekst;
 	delete Input;
-	SDL_FreeSurface(Tmp);
 }
 
 bool LevelErrorsFound()
@@ -1877,8 +2065,6 @@ bool LevelErrorsFound()
 
 void Game()
 {
-
-	SDL_Surface *Tmp,*Tmp1;
 	bool BoxMoving = false,CarryingBox=false;
 	char FileName[FILENAME_MAX];
 	char Text[500];
@@ -1888,10 +2074,6 @@ void Game()
 	Player = FindPlayer();
 
 	CInput *Input = new CInput(InputDelay);
-
-	Tmp1 = SDL_CreateRGBSurface(SDL_SWSURFACE,WINDOW_WIDTH,WINDOW_HEIGHT,16,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
-	Tmp = SDL_DisplayFormat(Tmp1);
-	SDL_FreeSurface(Tmp1);
 	bool Que=false,FloorFound=false,ResetViewPort = false;
 	Time = SDL_GetTicks();
     WorldParts.LimitVPLevel();
@@ -2111,9 +2293,9 @@ void Game()
 
         }
 
-        SDL_BlitSurface(IMGBackground,NULL,Tmp,NULL);
-        DrawLayer2(Tmp);
-        WorldParts.Draw(Tmp);
+        SDL_BlitSurface(IMGBackground,NULL,Buffer,NULL);
+        DrawLayer2(Buffer);
+        WorldParts.Draw(Buffer);
         WorldParts.Move();
 
         if (alpha < 255)
@@ -2121,15 +2303,33 @@ void Game()
             if(alpha+AlphaInc > MaxAlpha)
             {
                 alpha = 255;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
             else
             {
                 alpha+=AlphaInc;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
         }
-        SDL_BlitSurface(Tmp,NULL,Screen,NULL);
+        if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
         if (!Player->IsMoving && StageDone(Player))
 		{
@@ -2180,25 +2380,21 @@ void Game()
 				}
 			}
 		}
-		SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+		    SDL_framerateDelay(&Fpsman);
     }
     delete Input;
-    SDL_FreeSurface(Tmp);
 }
 
 void LevelEditor()
 {
 	int Teller,alpha=0;
-	SDL_Surface *Tmp,*Tmp1;
 	bool ShowPosition=true,SamePartFound,PlayerFound=false,ShowGrid=true;
 	char Tekst[200];
 	char *FileName = new char[FILENAME_MAX];
 	CSelector Selector(&WorldParts);
 	CInput *Input = new CInput(InputDelay-5);
 	int MaxX=0,MaxY=0,MinY=NrOfRows,MinX=NrOfCols,Xi=0,Yi=0;
-    Tmp1 = SDL_CreateRGBSurface(SDL_SWSURFACE,WINDOW_WIDTH,WINDOW_HEIGHT,16,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
-	Tmp = SDL_DisplayFormat(Tmp1);
-	SDL_FreeSurface(Tmp1);
 	if (StageReload)
 	{
 		sprintf(FileName,"%s/.blockdude_temp.lev",getenv("HOME") == NULL ? ".": getenv("HOME"));
@@ -2234,28 +2430,46 @@ void LevelEditor()
             if(alpha+AlphaInc > MaxAlpha)
             {
                 alpha = 255;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
             else
             {
                 alpha+=AlphaInc;
-                SDL_SetAlpha(Tmp,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
+                SDL_SetAlpha(Buffer,SDL_SRCALPHA | SDL_RLEACCEL,alpha);
             }
         }
-		SDL_BlitSurface(IMGBackground,NULL,Tmp,NULL);
+		SDL_BlitSurface(IMGBackground,NULL,Buffer,NULL);
 		if(ShowGrid)
-            SDL_BlitSurface(IMGGrid,NULL,Tmp,NULL);
-		WorldParts.Draw(Tmp);
+            SDL_BlitSurface(IMGGrid,NULL,Buffer,NULL);
+		WorldParts.Draw(Buffer);
 
-		Selector.Draw(Tmp);
+		Selector.Draw(Buffer);
 		if (ShowPosition)
 		{
 			sprintf(Tekst,"X: %d - Y: %d",Selector.GetPlayFieldX(),Selector.GetPlayFieldY());
-			boxRGBA(Tmp,177,0,WINDOW_WIDTH-1,13,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-			rectangleRGBA(Tmp,177,-1,WINDOW_WIDTH,13,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-			WriteText(Tmp,font,Tekst,strlen(Tekst),179,0,0,MenuTextColor);
+			boxRGBA(Buffer,177,0,WINDOW_WIDTH-1,13,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+			rectangleRGBA(Buffer,177,-1,WINDOW_WIDTH,13,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+			WriteText(Buffer,font,Tekst,strlen(Tekst),179,0,0,MenuTextColor);
 		}
-		SDL_BlitSurface(Tmp,NULL,Screen,NULL);
+		if ((WINDOW_WIDTH != ORIG_WINDOW_WIDTH) || (WINDOW_HEIGHT != ORIG_WINDOW_HEIGHT))
+        {
+            double wscale = (double)WINDOW_WIDTH / ORIG_WINDOW_WIDTH;
+            if(ORIG_WINDOW_HEIGHT * wscale > WINDOW_HEIGHT)
+                wscale = (double)WINDOW_HEIGHT / ORIG_WINDOW_HEIGHT;
+            SDL_Rect dst;
+            dst.x = (WINDOW_WIDTH - (ORIG_WINDOW_WIDTH * wscale)) / 2;
+            dst.y = (WINDOW_HEIGHT - (ORIG_WINDOW_HEIGHT * wscale)) / 2,
+            dst.w = ORIG_WINDOW_WIDTH * wscale;
+            dst.h = ORIG_WINDOW_HEIGHT * wscale;
+            SDL_Surface *ScreenBufferZoom = zoomSurface(Buffer,wscale,wscale,0);
+            SDL_BlitSurface(ScreenBufferZoom,NULL,Screen,&dst);
+            SDL_FreeSurface(ScreenBufferZoom);
+        }
+        else
+        {
+            SDL_BlitSurface(Buffer, NULL, Screen, NULL);
+        }
+        HandleFPS();
         SDL_Flip(Screen);
         Input->Update();
 
@@ -2270,15 +2484,15 @@ void LevelEditor()
                 sprintf(Tekst,"The current level isn't saved yet!\nDo you want to save it now ?\n\nPress (%s) to save, (%s) to cancel saving","A","B");
                 if(AskQuestion(Tekst))
                 {
-                    SDL_BlitSurface(IMGBackground,NULL,Screen,NULL);
-                    WorldParts.Draw(Screen);
-                    Selector.Draw(Screen);
+                    SDL_BlitSurface(IMGBackground,NULL,Buffer,NULL);
+                    WorldParts.Draw(Buffer);
+                    Selector.Draw(Buffer);
                     if (ShowPosition)
                     {
                         sprintf(Tekst,"X: %d - Y: %d",Selector.GetPlayFieldX(),Selector.GetPlayFieldY());
-                        boxRGBA(Screen,217,0,WINDOW_WIDTH-1,13,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
-                        rectangleRGBA(Screen,217,-1,WINDOW_WIDTH,13,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
-                        WriteText(Screen,font,Tekst,strlen(Tekst),219,0,0,MenuTextColor);
+                        boxRGBA(Buffer,217,0,WINDOW_WIDTH-1,13,MenuBoxColor.r,MenuBoxColor.g,MenuBoxColor.b,MenuBoxColor.unused);
+                        rectangleRGBA(Buffer,217,-1,WINDOW_WIDTH,13,MenuBoxBorderColor.r,MenuBoxBorderColor.g,MenuBoxBorderColor.b,MenuBoxBorderColor.unused);
+                        WriteText(Buffer,font,Tekst,strlen(Tekst),219,0,0,MenuTextColor);
                     }
                     if (!LevelErrorsFound())
                     {
@@ -2566,12 +2780,11 @@ void LevelEditor()
                 LevelHasChanged = true;
             Input->Delay();
         }
-
-		SDL_framerateDelay(&Fpsman);
+        if(!noDelay)
+		    SDL_framerateDelay(&Fpsman);
 	}
 	delete[] FileName;
 	delete Input;
-	SDL_FreeSurface(Tmp);
 }
 
 void UnloadMusic()
@@ -2607,19 +2820,67 @@ void UnloadSounds()
 
 int main(int argc, char **argv)
 {
-    SDL_Surface *Tmp;
 	srand((int) time(NULL));
+
+    for (int i=0; i < argc; i++)
+    {
+        if(strcasecmp(argv[i], "-nd") == 0)
+            noDelay = true;
+        if(strcasecmp(argv[i], "-fps") == 0)
+            ShowFps = true;
+        if(strcasecmp(argv[i], "-f") == 0)
+            fullscreen = true;
+        if(strcasecmp(argv[i], "-s2") == 0)
+        {
+            WINDOW_WIDTH = ORIG_WINDOW_WIDTH * 2;
+            WINDOW_HEIGHT = ORIG_WINDOW_HEIGHT * 2;
+        }
+
+        if(strcasecmp(argv[i], "-s3") == 0)
+        {
+            WINDOW_WIDTH = ORIG_WINDOW_WIDTH * 3;
+            WINDOW_HEIGHT = ORIG_WINDOW_HEIGHT * 3;
+        }
+
+        if(strcasecmp(argv[i], "-s4") == 0)
+        {
+            WINDOW_WIDTH = ORIG_WINDOW_WIDTH * 4;
+            WINDOW_HEIGHT = ORIG_WINDOW_HEIGHT * 4;
+        }
+
+        if(strcasecmp(argv[i], "-s5") == 0)
+        {
+            WINDOW_WIDTH = ORIG_WINDOW_WIDTH * 5;
+            WINDOW_HEIGHT = ORIG_WINDOW_HEIGHT * 5;
+        }
+    }
+
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO ) == 0)
 	{
 		printf("SDL Succesfully initialized\n");
-        Screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,16, SDL_HWSURFACE );
-        SDL_WM_SetCaption( "Blockdude 1.3 - Created By Willems Soft", NULL );
+        #if FUNKEY
+			fullscreen = true;
+		#endif
+		Uint32 flags = SDL_SWSURFACE;
+		if (fullscreen)
+		{
+			WINDOW_WIDTH = 0;
+			WINDOW_HEIGHT = 0;
+			flags |= SDL_FULLSCREEN;
+		}
+        
+        Screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,0, flags);        
 		if(Screen)
 		{
+            WINDOW_WIDTH = Screen->w;
+            WINDOW_HEIGHT = Screen->h;
 		    printf("Succesfully Set %dx%dx16\n",WINDOW_WIDTH,WINDOW_HEIGHT);
-		    Tmp = SDL_CreateRGBSurface(SDL_SWSURFACE,WINDOW_WIDTH,WINDOW_HEIGHT,16,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
-			SDL_FreeSurface(Tmp);
+            SDL_WM_SetCaption( "Blockdude 1.3 - Created By Willems Soft", NULL );
+		    SDL_Surface *Tmp = SDL_CreateRGBSurface(SDL_SWSURFACE,ORIG_WINDOW_WIDTH,ORIG_WINDOW_HEIGHT,0,Screen->format->Rmask,Screen->format->Gmask,Screen->format->Bmask,Screen->format->Amask);
+			Buffer = SDL_DisplayFormat(Tmp);
+            SDL_FreeSurface(Tmp);
 		    SDL_FillRect(Screen,NULL,SDL_MapRGB(Screen->format,0,0,0));
+            SDL_FillRect(Buffer,NULL,SDL_MapRGB(Screen->format,0,0,0));
             SDL_ShowCursor(SDL_DISABLE);
 			if (Mix_OpenAudio(22050,AUDIO_S16,MIX_DEFAULT_CHANNELS,1024) < 0)
 			{
@@ -2645,7 +2906,7 @@ int main(int argc, char **argv)
 						SDL_setFramerate(&Fpsman,FPS);
 						TTF_SetFontStyle(font,TTF_STYLE_NORMAL);
 						if (GlobalSoundEnabled)
-							Music[0] = Mix_LoadMUS("./blockdudefs/music/title.mod");
+							Music[0] = Mix_LoadMUS("./blockdudefs/music/title.ogg");
 						SearchForLevelPacks();
 						SearchForSkins();
 						LoadSounds();

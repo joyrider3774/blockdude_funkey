@@ -18,15 +18,15 @@ struct SPoint
 };
 
 constexpr int SMOOTHING = 0,
-          WINDOW_WIDTH = 240,
-          WINDOW_HEIGHT = 240,
+          ORIG_WINDOW_WIDTH = 240,
+          ORIG_WINDOW_HEIGHT = 240,
    		  TileWidth = 16,
           TileHeight = 16,
 	      AlphaInc =20,
           NrOfRows = 50,
 		  NrOfCols = 50,
-		  NrOfRowsVisible = (WINDOW_HEIGHT / TileHeight),
-    	  NrOfColsVisible = (WINDOW_WIDTH / TileWidth) ,
+		  NrOfRowsVisible = (ORIG_WINDOW_HEIGHT / TileHeight),
+    	  NrOfColsVisible = (ORIG_WINDOW_WIDTH / TileWidth) ,
 		  MaxHistory = 1000,
 		  IDEmpty = 1,
 		  IDPlayer = 2,
@@ -80,7 +80,7 @@ constexpr int SMOOTHING = 0,
 		  AnimBaseRightJump= 12;
 
 
-#ifdef FUNKEY
+#if defined(FUNKEY)
 
 #define BUT_UP SDLK_u
 #define BUT_RIGHT SDLK_r
@@ -94,6 +94,23 @@ constexpr int SMOOTHING = 0,
 #define BUT_SELECT SDLK_k
 #define BUT_L SDLK_m
 #define BUT_R SDLK_n
+#define BUT_QUIT SDLK_q
+
+#elif defined(MIYOO)
+
+#define BUT_UP SDLK_UP
+#define BUT_RIGHT SDLK_RIGHT
+#define BUT_DOWN SDLK_DOWN
+#define BUT_LEFT SDLK_LEFT
+#define BUT_A SDLK_SPACE
+#define BUT_X SDLK_LSHIFT
+#define BUT_Y SDLK_LALT
+#define BUT_B SDLK_LCTRL
+#define BUT_START SDLK_RETURN
+#define BUT_SELECT SDLK_RCTRL
+#define BUT_L SDLK_e
+#define BUT_R SDLK_t
+#define BUT_QUIT SDLK_ESCAPE
 
 #else
 
@@ -109,6 +126,7 @@ constexpr int SMOOTHING = 0,
 #define BUT_SELECT SDLK_ESCAPE
 #define BUT_L SDLK_l
 #define BUT_R SDLK_r
+#define BUT_QUIT SDLK_q
 
 
 #endif
